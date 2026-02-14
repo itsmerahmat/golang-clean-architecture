@@ -30,6 +30,8 @@ func Bootstrap(config *BootstrapConfig) {
 	userRepository := repository.NewUserRepository(config.Log)
 	contactRepository := repository.NewContactRepository(config.Log)
 	addressRepository := repository.NewAddressRepository(config.Log)
+	roleRepository := repository.NewRoleRepository(config.Log)
+	permissionRepository := repository.NewPermissionRepository(config.Log)
 
 	// setup producer
 	var userProducer *messaging.UserProducer
@@ -46,21 +48,30 @@ func Bootstrap(config *BootstrapConfig) {
 	userUseCase := usecase.NewUserUseCase(config.DB, config.Log, config.Validate, userRepository, userProducer)
 	contactUseCase := usecase.NewContactUseCase(config.DB, config.Log, config.Validate, contactRepository, contactProducer)
 	addressUseCase := usecase.NewAddressUseCase(config.DB, config.Log, config.Validate, contactRepository, addressRepository, addressProducer)
+	roleUseCase := usecase.NewRoleUseCase(config.DB, config.Log, config.Validate, roleRepository, permissionRepository)
+	permissionUseCase := usecase.NewPermissionUseCase(config.DB, config.Log, config.Validate, permissionRepository)
 
 	// setup controller
 	userController := http.NewUserController(userUseCase, config.Log)
 	contactController := http.NewContactController(contactUseCase, config.Log)
 	addressController := http.NewAddressController(addressUseCase, config.Log)
+	roleController := http.NewRoleController(roleUseCase, config.Log)
+	permissionController := http.NewPermissionController(permissionUseCase, config.Log)
+	userRoleController := http.NewUserRoleController(config.DB, config.Log, userRepository, roleRepository)
 
 	// setup middleware
 	authMiddleware := middleware.NewAuth(userUseCase)
 
 	routeConfig := route.RouteConfig{
-		App:               config.App,
-		UserController:    userController,
-		ContactController: contactController,
-		AddressController: addressController,
-		AuthMiddleware:    authMiddleware,
+		App:                  config.App,
+		UserController:       userController,
+		ContactController:    contactController,
+		AddressController:    addressController,
+		RoleController:       roleController,
+		PermissionController: permissionController,
+		UserRoleController:   userRoleController,
+		AuthMiddleware:       authMiddleware,
+		Log:                  config.Log,
 	}
 	routeConfig.Setup()
 }

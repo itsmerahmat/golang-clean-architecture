@@ -46,7 +46,7 @@ func (c *UserUseCase) Verify(ctx context.Context, request *model.VerifyUserReque
 	}
 
 	user := new(entity.User)
-	if err := c.UserRepository.FindByToken(tx, user, request.Token); err != nil {
+	if err := c.UserRepository.FindByTokenWithRoles(tx, user, request.Token); err != nil {
 		c.Log.Warnf("Failed find user by token : %+v", err)
 		return nil, fiber.ErrNotFound
 	}
@@ -56,7 +56,26 @@ func (c *UserUseCase) Verify(ctx context.Context, request *model.VerifyUserReque
 		return nil, fiber.ErrInternalServerError
 	}
 
-	return &model.Auth{ID: user.ID}, nil
+	// Extract roles and permissions
+	roles := make([]string, 0)
+	permissions := make([]string, 0)
+	permissionMap := make(map[string]struct{})
+
+	for _, role := range user.Roles {
+		roles = append(roles, role.Name)
+		for _, perm := range role.Permissions {
+			if _, exists := permissionMap[perm.Name]; !exists {
+				permissions = append(permissions, perm.Name)
+				permissionMap[perm.Name] = struct{}{}
+			}
+		}
+	}
+
+	return &model.Auth{
+		ID:          user.ID,
+		Roles:       roles,
+		Permissions: permissions,
+	}, nil
 }
 
 func (c *UserUseCase) Create(ctx context.Context, request *model.RegisterUserRequest) (*model.UserResponse, error) {
