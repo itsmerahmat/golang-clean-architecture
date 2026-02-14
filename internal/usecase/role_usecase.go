@@ -71,7 +71,7 @@ func (c *RoleUseCase) Create(ctx context.Context, request *model.CreateRoleReque
 			permission := new(entity.Permission)
 			if err := c.PermissionRepository.FindById(tx, permission, permID); err != nil {
 				c.Log.Warnf("Permission not found: %s", permID)
-				continue
+				return nil, fiber.NewError(fiber.StatusBadRequest, "Permission not found: "+permID)
 			}
 			if err := c.RoleRepository.AssignPermission(tx, role, permission); err != nil {
 				c.Log.Warnf("Failed to assign permission: %+v", err)
@@ -177,7 +177,7 @@ func (c *RoleUseCase) Update(ctx context.Context, request *model.UpdateRoleReque
 			permission := new(entity.Permission)
 			if err := c.PermissionRepository.FindById(tx, permission, permID); err != nil {
 				c.Log.Warnf("Permission not found: %s", permID)
-				continue
+				return nil, fiber.NewError(fiber.StatusBadRequest, "Permission not found: "+permID)
 			}
 			if err := c.RoleRepository.AssignPermission(tx, role, permission); err != nil {
 				c.Log.Warnf("Failed to assign permission: %+v", err)

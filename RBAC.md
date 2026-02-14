@@ -63,32 +63,32 @@ The system includes permissions for the following resources:
 
 ## API Endpoints
 
-### Role Management (Admin Only)
+### Role Management
 
 ```
-GET    /api/roles                      - List all roles
-GET    /api/roles/:roleId              - Get role by ID
-POST   /api/roles                      - Create new role
-PUT    /api/roles/:roleId              - Update role
-DELETE /api/roles/:roleId              - Delete role
+GET    /api/roles                      - List all roles (authenticated)
+GET    /api/roles/:roleId              - Get role by ID (authenticated)
+POST   /api/roles                      - Create new role (admin only)
+PUT    /api/roles/:roleId              - Update role (admin only)
+DELETE /api/roles/:roleId              - Delete role (admin only)
 ```
 
-### Permission Management (Admin Only)
+### Permission Management
 
 ```
-GET    /api/permissions                - List all permissions
-GET    /api/permissions/:permissionId  - Get permission by ID
-POST   /api/permissions                - Create new permission
-PUT    /api/permissions/:permissionId  - Update permission
-DELETE /api/permissions/:permissionId  - Delete permission
+GET    /api/permissions                - List all permissions (authenticated)
+GET    /api/permissions/:permissionId  - Get permission by ID (authenticated)
+POST   /api/permissions                - Create new permission (admin only)
+PUT    /api/permissions/:permissionId  - Update permission (admin only)
+DELETE /api/permissions/:permissionId  - Delete permission (admin only)
 ```
 
 ### User Role Management (Admin Only)
 
 ```
-GET    /api/users/:userId/roles             - Get user's roles
-POST   /api/users/:userId/roles/:roleId     - Assign role to user
-DELETE /api/users/:userId/roles/:roleId     - Remove role from user
+GET    /api/users/:userId/roles             - Get user's roles (admin only)
+POST   /api/users/:userId/roles/:roleId     - Assign role to user (admin only)
+DELETE /api/users/:userId/roles/:roleId     - Remove role from user (admin only)
 ```
 
 ## Usage Examples

@@ -51,7 +51,7 @@ func (c *RouteConfig) SetupAuthRoute() {
 }
 
 func (c *RouteConfig) SetupAdminRoute() {
-	// Role management endpoints - require admin role
+	// Role management endpoints
 	adminRole := middleware.RequireRole(c.Log, "admin")
 	
 	c.App.Get("/api/roles", c.RoleController.List)
@@ -60,7 +60,7 @@ func (c *RouteConfig) SetupAdminRoute() {
 	c.App.Put("/api/roles/:roleId", adminRole, c.RoleController.Update)
 	c.App.Delete("/api/roles/:roleId", adminRole, c.RoleController.Delete)
 
-	// Permission management endpoints - require admin role
+	// Permission management endpoints
 	c.App.Get("/api/permissions", c.PermissionController.List)
 	c.App.Get("/api/permissions/:permissionId", c.PermissionController.Get)
 	c.App.Post("/api/permissions", adminRole, c.PermissionController.Create)
