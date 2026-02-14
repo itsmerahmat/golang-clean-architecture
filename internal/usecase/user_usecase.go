@@ -59,14 +59,14 @@ func (c *UserUseCase) Verify(ctx context.Context, request *model.VerifyUserReque
 	// Extract roles and permissions
 	roles := make([]string, 0)
 	permissions := make([]string, 0)
-	permissionMap := make(map[string]bool)
+	permissionMap := make(map[string]struct{})
 
 	for _, role := range user.Roles {
 		roles = append(roles, role.Name)
 		for _, perm := range role.Permissions {
-			if !permissionMap[perm.Name] {
+			if _, exists := permissionMap[perm.Name]; !exists {
 				permissions = append(permissions, perm.Name)
-				permissionMap[perm.Name] = true
+				permissionMap[perm.Name] = struct{}{}
 			}
 		}
 	}
